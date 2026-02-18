@@ -1,6 +1,7 @@
 package eu.tinylinden;
 
 import io.vavr.collection.Seq;
+import io.vavr.collection.Stream;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 
@@ -35,6 +36,14 @@ public class ForEachBenchmark {
         return seq;
     }
 
+    private Stream<UUID> vavrStream(int size) {
+        Stream<UUID> stream = Stream();
+        for (int i = 0; i < size; i++) {
+            stream = stream.append(UUID.randomUUID());
+        }
+        return stream;
+    }
+
     private List<UUID> javaList(int size) {
         List<UUID> list = new ArrayList<>();
         for (int i = 0; i < size; i++) {
@@ -51,6 +60,16 @@ public class ForEachBenchmark {
     @Benchmark
     public void vavrSeq_100_000(Blackhole bh) {
         run(cache.computeIfAbsent("vavrSeq_100_000", it -> vavrSeq(100_000)), bh);
+    }
+
+    @Benchmark
+    public void vavrStream_5_000(Blackhole bh) {
+        run(cache.computeIfAbsent("vavrStream_5_000", it -> vavrStream(5_000)), bh);
+    }
+
+    @Benchmark
+    public void vavrStream_100_000(Blackhole bh) {
+        run(cache.computeIfAbsent("vavrStream_100_000", it -> vavrStream(100_000)), bh);
     }
 
     @Benchmark
